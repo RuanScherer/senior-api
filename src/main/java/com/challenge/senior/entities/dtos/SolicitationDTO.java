@@ -1,43 +1,29 @@
-package com.challenge.senior.entities;
+package com.challenge.senior.entities.dtos;
 
 import com.challenge.senior.entities.enums.SolicitationStatus;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
-public class Solicitation implements Serializable {
+public class SolicitationDTO {
 
-    @Id
     private UUID id = UUID.randomUUID();
 
-    @Column(nullable = false)
     private String requester;
 
-    @Column(nullable = false)
     private Integer solicitationStatus;
 
-    @Column(nullable = false)
     private Instant solicitationTime;
 
-    @OneToMany(mappedBy = "id.solicitation")
-    private Set<SolicitationItem> items = new HashSet<>();
+    private Set<SolicitationItemDTO> items = new HashSet<>();
 
-    public Solicitation() {}
+    public SolicitationDTO() {}
 
-    public Solicitation(final UUID id,
-                        final String requester,
-                        final SolicitationStatus solicitationStatus,
-                        final Instant solicitationTime) {
-        this.id = id;
+    public SolicitationDTO(final String requester,
+                           final SolicitationStatus solicitationStatus,
+                           final Instant solicitationTime) {
         this.requester = requester;
         setSolicitationStatus(solicitationStatus);
         this.solicitationTime = solicitationTime;
@@ -77,20 +63,7 @@ public class Solicitation implements Serializable {
         this.solicitationTime = orderTime;
     }
 
-    public Set<SolicitationItem> getItems() {
+    public Set<SolicitationItemDTO> getItems() {
         return items;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Solicitation solicitation = (Solicitation) o;
-        return id.equals(solicitation.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

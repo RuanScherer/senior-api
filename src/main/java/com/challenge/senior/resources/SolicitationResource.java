@@ -1,6 +1,7 @@
 package com.challenge.senior.resources;
 
 import com.challenge.senior.entities.Solicitation;
+import com.challenge.senior.entities.dtos.SolicitationDTO;
 import com.challenge.senior.services.SolicitationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +30,14 @@ public class SolicitationResource {
     }
 
     @PostMapping()
-    public ResponseEntity<Solicitation> create(@RequestBody Solicitation solicitation) {
-        solicitation = solicitationService.save(solicitation);
+    public ResponseEntity<Solicitation> create(@RequestBody SolicitationDTO solicitation) {
+        Solicitation response = solicitationService.save(solicitation);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(solicitation.getId())
+                .buildAndExpand(response.getId())
                 .toUri();
-        return ResponseEntity.created(uri).body(solicitation);
+        return ResponseEntity.created(uri).body(response);
     }
 
     @PutMapping("/{id}")
