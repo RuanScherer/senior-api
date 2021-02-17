@@ -1,5 +1,6 @@
 package com.challenge.senior.entities;
 
+import com.challenge.senior.entities.enums.ProductType;
 import com.challenge.senior.entities.enums.SolicitationStatus;
 
 import javax.persistence.Column;
@@ -31,16 +32,20 @@ public class Solicitation implements Serializable {
     @OneToMany(mappedBy = "id.solicitation")
     private Set<SolicitationItem> items = new HashSet<>();
 
+    private Double discount;
+
     public Solicitation() {}
 
     public Solicitation(final UUID id,
                         final String requester,
                         final SolicitationStatus solicitationStatus,
-                        final Instant solicitationTime) {
+                        final Instant solicitationTime,
+                        final Double discount) {
         this.id = id;
         this.requester = requester;
         setSolicitationStatus(solicitationStatus);
         this.solicitationTime = solicitationTime;
+        this.discount = discount;
     }
 
     public UUID getId() {
@@ -79,6 +84,34 @@ public class Solicitation implements Serializable {
 
     public Set<SolicitationItem> getItems() {
         return items;
+    }
+
+    public Double getDiscount() {
+        if (this.discount != null) {
+            return discount;
+        }
+        return 0.0;
+    }
+
+    public void setDiscount(final Double discount) {
+        this.discount = discount;
+    }
+
+    public Double getTotal() {
+        Double servicesTotal = 0.0;
+        Double productsTotal = 0.0;
+
+        for (SolicitationItem solicitationItem : this.getItems()) {
+            if (solicitationItem.getProduct().getType() == ProductType.PRODUCT) {
+                productsTotal += solicitationItem.getPrice();
+            } else {
+                servicesTotal += solicitationItem.getPrice();
+            }
+        }
+
+        productsTotal -= productsTotal * (this.getDiscount() / 100);
+
+        return servicesTotal + productsTotal;
     }
 
     @Override
