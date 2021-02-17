@@ -1,7 +1,12 @@
 package com.challenge.senior.services;
 
 import com.challenge.senior.entities.Solicitation;
+import com.challenge.senior.entities.SolicitationItem;
+import com.challenge.senior.entities.dtos.SolicitationDTO;
+import com.challenge.senior.entities.dtos.SolicitationItemDTO;
 import com.challenge.senior.entities.enums.SolicitationStatus;
+import com.challenge.senior.entities.mappers.SolicitationItemMapper;
+import com.challenge.senior.entities.mappers.SolicitationMapper;
 import com.challenge.senior.exceptions.ResourceNotFoundException;
 import com.challenge.senior.repositories.SolicitationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,9 @@ public class SolicitationService {
     @Autowired
     private SolicitationRepository solicitationRepository;
 
+    @Autowired
+    private SolicitationItemService solicitationItemService;
+
     public Solicitation findById(final UUID id) {
         Optional<Solicitation> order = solicitationRepository.findById(id);
         return order.orElseThrow(() -> new ResourceNotFoundException(id.toString()));
@@ -29,10 +37,19 @@ public class SolicitationService {
         return solicitationRepository.findAll();
     }
 
-    public Solicitation save(final Solicitation solicitation) {
-        solicitation.setSolicitationStatus(SolicitationStatus.WAITTING_PAYMENT);
-        solicitation.setSolicitationTime(Instant.now());
-        return solicitationRepository.save(solicitation);
+    public Solicitation save(final SolicitationDTO solicitationDTO) {
+        solicitationDTO.setSolicitationStatus(SolicitationStatus.WAITTING_PAYMENT);
+        solicitationDTO.setSolicitationTime(Instant.now());
+
+        Solicitation solicitation = SolicitationMapper.fromDtoToEntity(solicitationDTO);
+        solicitation = solicitationRepository.save(solicitation);
+
+        for (SolicitationItemDTO solicitationItemDTO : solicitationDTO.getItems()) {
+            SolicitationItem solicitationItem = SolicitationItemMapper.fromDtoToEntity(solicitationItemDTO, solicitationDTO);
+            solicitationItemService.save(solicitationItem);
+        }
+
+        return solicitation;
     }
 
     public Solicitation update(final UUID id, final Solicitation solicitation) {
