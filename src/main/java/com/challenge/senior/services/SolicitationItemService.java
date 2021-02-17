@@ -6,6 +6,7 @@ import com.challenge.senior.entities.pk.SolicitationItemPK;
 import com.challenge.senior.exceptions.ResourceNotFoundException;
 import com.challenge.senior.repositories.SolicitationItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,5 +37,13 @@ public class SolicitationItemService {
     public SolicitationItem findById(final SolicitationItemPK solicitationItemId) {
         Optional<SolicitationItem> solicitationItem = solicitationItemRepository.findById(solicitationItemId);
         return solicitationItem.orElseThrow(() -> new ResourceNotFoundException(solicitationItemId.toString()));
+    }
+
+    public void delete(final SolicitationItemPK solicitationItemId) {
+        try {
+            solicitationItemRepository.deleteById(solicitationItemId);
+        } catch (final EmptyResultDataAccessException exception) { // for invalid record ID
+            throw new ResourceNotFoundException(solicitationItemId);
+        }
     }
 }

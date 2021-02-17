@@ -75,4 +75,15 @@ public class SolicitationResource {
         );
         return ResponseEntity.ok().body(solicitationItemService.findById(solicitationItemId));
     }
+
+    @DeleteMapping("/{id}/items/{productId}")
+    public ResponseEntity<Void> delete(@PathVariable final UUID id,
+                                       @PathVariable final UUID productId) {
+        SolicitationItemPK solicitationItemId = new SolicitationItemPK(
+                solicitationService.findById(id),
+                productService.findById(productId)
+        );
+        solicitationItemService.delete(solicitationItemId);
+        return ResponseEntity.noContent().build();
+    }
 }
