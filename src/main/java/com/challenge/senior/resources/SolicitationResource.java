@@ -4,6 +4,7 @@ import com.challenge.senior.entities.Solicitation;
 import com.challenge.senior.entities.SolicitationItem;
 import com.challenge.senior.entities.dtos.SolicitationDTO;
 import com.challenge.senior.entities.dtos.SolicitationItemDTO;
+import com.challenge.senior.entities.dtos.SolicitationItemUpdateDTO;
 import com.challenge.senior.entities.mappers.SolicitationItemMapper;
 import com.challenge.senior.entities.pk.SolicitationItemPK;
 import com.challenge.senior.services.ProductService;
@@ -94,6 +95,21 @@ public class SolicitationResource {
                 .toUri();
 
         return ResponseEntity.created(uri).body(solicitationItem);
+    }
+
+    @PutMapping("/{id}/items/{productId}")
+    public ResponseEntity<SolicitationItem> update(@PathVariable final UUID id,
+                                                   @PathVariable final UUID productId,
+                                                   @RequestBody SolicitationItemUpdateDTO SolicitationItemUpdateDTO) {
+        SolicitationItemPK solicitationItemId = new SolicitationItemPK(
+                solicitationService.findById(id),
+                productService.findById(productId)
+        );
+        SolicitationItem solicitationItem = solicitationItemService.update(
+                solicitationItemId,
+                SolicitationItemUpdateDTO
+        );
+        return ResponseEntity.ok().body(solicitationItem);
     }
 
     @DeleteMapping("/{id}/items/{productId}")
