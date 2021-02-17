@@ -1,7 +1,9 @@
 package com.challenge.senior.exceptions;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -28,7 +30,7 @@ public class ResourceExceptionHandler {
     }
 
     @ExceptionHandler(DatabaseException.class)
-    public ResponseEntity<StandardError> illegalArgumentException(final DatabaseException exception,
+    public ResponseEntity<StandardError> databaseException(final DatabaseException exception,
                                                                   final HttpServletRequest request) {
         final StandardError error = new StandardError(
                 Instant.now(),
@@ -48,6 +50,19 @@ public class ResourceExceptionHandler {
                 BAD_REQUEST,
                 "Illegal argument",
                 exception.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<StandardError> methodArgumentNotValidException(final InvalidFormatException exception,
+                                                                         final HttpServletRequest request) {
+        final StandardError error = new StandardError(
+                Instant.now(),
+                BAD_REQUEST,
+                "Invalid format",
+                "Some JSON attributes were sent with the wrong format.",
                 request.getRequestURI()
         );
         return ResponseEntity.status(BAD_REQUEST).body(error);
