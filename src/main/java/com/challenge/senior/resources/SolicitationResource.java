@@ -1,7 +1,9 @@
 package com.challenge.senior.resources;
 
 import com.challenge.senior.entities.Solicitation;
+import com.challenge.senior.entities.SolicitationItem;
 import com.challenge.senior.entities.dtos.SolicitationDTO;
+import com.challenge.senior.services.SolicitationItemService;
 import com.challenge.senior.services.SolicitationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,9 @@ public class SolicitationResource {
 
     @Autowired
     private SolicitationService solicitationService;
+
+    @Autowired
+    private SolicitationItemService solicitationItemService;
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Solicitation> findById(@PathVariable final UUID id) {
@@ -50,5 +55,10 @@ public class SolicitationResource {
     public ResponseEntity<Void> delete(@PathVariable final UUID id) {
         solicitationService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/{id}/items")
+    public ResponseEntity<List<SolicitationItem>> findAllItems(@PathVariable final UUID id) {
+        return ResponseEntity.ok().body(solicitationItemService.findBySolicitationId(id));
     }
 }
