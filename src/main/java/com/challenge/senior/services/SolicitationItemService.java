@@ -26,6 +26,10 @@ public class SolicitationItemService {
     private ProductService productService;
 
     public SolicitationItem save(final SolicitationItem solicitationItem) {
+        final Double productPrice = solicitationItem.getProduct().getPrice();
+        final Integer itemQuantity = solicitationItem.getQuantity();
+        solicitationItem.setPrice(productPrice * itemQuantity);
+
         return solicitationItemRepository.save(solicitationItem);
     }
 
