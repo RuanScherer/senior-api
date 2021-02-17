@@ -10,7 +10,8 @@ public class SolicitationMapper {
                 solicitationDTO.getId(),
                 solicitationDTO.getRequester(),
                 solicitationDTO.getSolicitationStatus(),
-                solicitationDTO.getSolicitationTime()
+                solicitationDTO.getSolicitationTime(),
+                solicitationDTO.getDiscount()
         );
         return solicitation;
     }

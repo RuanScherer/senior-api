@@ -19,14 +19,18 @@ public class SolicitationDTO {
 
     private Set<SolicitationItemDTO> items = new HashSet<>();
 
+    private Double discount;
+
     public SolicitationDTO() {}
 
     public SolicitationDTO(final String requester,
                            final SolicitationStatus solicitationStatus,
-                           final Instant solicitationTime) {
+                           final Instant solicitationTime,
+                           final Double discount) {
         this.requester = requester;
         setSolicitationStatus(solicitationStatus);
         this.solicitationTime = solicitationTime;
+        this.discount = discount;
     }
 
     public UUID getId() {
@@ -65,5 +69,13 @@ public class SolicitationDTO {
 
     public Set<SolicitationItemDTO> getItems() {
         return items;
+    }
+
+    public Double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(final Double discount) {
+        this.discount = discount;
     }
 }
