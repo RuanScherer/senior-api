@@ -1,6 +1,7 @@
 package com.challenge.senior.entities.mappers;
 
 import com.challenge.senior.entities.Product;
+import com.challenge.senior.entities.Solicitation;
 import com.challenge.senior.entities.SolicitationItem;
 import com.challenge.senior.entities.dtos.SolicitationDTO;
 import com.challenge.senior.entities.dtos.SolicitationItemDTO;
@@ -24,15 +25,28 @@ public class SolicitationItemMapper {
     }
 
     public static SolicitationItem fromDtoToEntity(final SolicitationItemDTO solicitationItemDTO,
-                                                   final SolicitationDTO solicitation) {
+                                                   final SolicitationDTO solicitationDTO) {
         final UUID id = solicitationItemDTO.getProductID();
         final Product product = staticProductService.findById(id);
-        SolicitationItem solicitationItem = new SolicitationItem(
-                SolicitationMapper.fromDtoToEntity(solicitation),
+
+        return new SolicitationItem(
+                SolicitationMapper.fromDtoToEntity(solicitationDTO),
                 product,
                 solicitationItemDTO.getQuantity(),
                 solicitationItemDTO.getPrice()
         );
-        return solicitationItem;
+    }
+
+    public static SolicitationItem fromDtoToEntity(final SolicitationItemDTO solicitationItemDTO,
+                                                   final Solicitation solicitation) {
+        final UUID id = solicitationItemDTO.getProductID();
+        final Product product = staticProductService.findById(id);
+
+        return new SolicitationItem(
+                solicitation,
+                product,
+                solicitationItemDTO.getQuantity(),
+                solicitationItemDTO.getPrice()
+        );
     }
 }

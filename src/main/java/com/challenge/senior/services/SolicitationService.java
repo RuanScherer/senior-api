@@ -47,10 +47,6 @@ public class SolicitationService {
         for (SolicitationItemDTO solicitationItemDTO : solicitationDTO.getItems()) {
             SolicitationItem solicitationItem = SolicitationItemMapper.fromDtoToEntity(solicitationItemDTO, solicitationDTO);
 
-            final Double productPrice = solicitationItem.getProduct().getPrice();
-            final Integer itemQuantity = solicitationItem.getQuantity();
-            solicitationItem.setPrice(productPrice * itemQuantity);
-
             solicitationItem = solicitationItemService.save(solicitationItem);
             solicitation.getItems().add(solicitationItem);
         }

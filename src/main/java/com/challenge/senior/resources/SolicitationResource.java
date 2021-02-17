@@ -1,7 +1,14 @@
 package com.challenge.senior.resources;
 
 import com.challenge.senior.entities.Solicitation;
+import com.challenge.senior.entities.SolicitationItem;
 import com.challenge.senior.entities.dtos.SolicitationDTO;
+import com.challenge.senior.entities.dtos.SolicitationItemDTO;
+import com.challenge.senior.entities.dtos.SolicitationItemUpdateDTO;
+import com.challenge.senior.entities.mappers.SolicitationItemMapper;
+import com.challenge.senior.entities.pk.SolicitationItemPK;
+import com.challenge.senior.services.ProductService;
+import com.challenge.senior.services.SolicitationItemService;
 import com.challenge.senior.services.SolicitationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +25,12 @@ public class SolicitationResource {
 
     @Autowired
     private SolicitationService solicitationService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private SolicitationItemService solicitationItemService;
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Solicitation> findById(@PathVariable final UUID id) {
@@ -49,6 +62,63 @@ public class SolicitationResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable final UUID id) {
         solicitationService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/{id}/items")
+    public ResponseEntity<List<SolicitationItem>> findAllItems(@PathVariable final UUID id) {
+        return ResponseEntity.ok().body(solicitationItemService.findBySolicitationId(id));
+    }
+
+    @GetMapping(value = "/{id}/items/{productId}")
+    public ResponseEntity<SolicitationItem> findItemById(@PathVariable final UUID id,
+                                                         @PathVariable final UUID productId) {
+        SolicitationItemPK solicitationItemId = new SolicitationItemPK(
+                solicitationService.findById(id),
+                productService.findById(productId)
+        );
+        return ResponseEntity.ok().body(solicitationItemService.findById(solicitationItemId));
+    }
+
+    @PostMapping("/{id}/items")
+    public ResponseEntity<SolicitationItem> createItem(@PathVariable final UUID id,
+                                                       @RequestBody SolicitationItemDTO solicitationItemDTO) {
+        Solicitation solicitation = solicitationService.findById(id);
+
+        SolicitationItem solicitationItem = SolicitationItemMapper.fromDtoToEntity(solicitationItemDTO, solicitation);
+        solicitationItem = solicitationItemService.save(solicitationItem);
+
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{productId}")
+                .buildAndExpand(solicitationItem.getProduct().getId())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(solicitationItem);
+    }
+
+    @PutMapping("/{id}/items/{productId}")
+    public ResponseEntity<SolicitationItem> update(@PathVariable final UUID id,
+                                                   @PathVariable final UUID productId,
+                                                   @RequestBody SolicitationItemUpdateDTO SolicitationItemUpdateDTO) {
+        SolicitationItemPK solicitationItemId = new SolicitationItemPK(
+                solicitationService.findById(id),
+                productService.findById(productId)
+        );
+        SolicitationItem solicitationItem = solicitationItemService.update(
+                solicitationItemId,
+                SolicitationItemUpdateDTO
+        );
+        return ResponseEntity.ok().body(solicitationItem);
+    }
+
+    @DeleteMapping("/{id}/items/{productId}")
+    public ResponseEntity<Void> deleteItem(@PathVariable final UUID id, @PathVariable final UUID productId) {
+        SolicitationItemPK solicitationItemId = new SolicitationItemPK(
+                solicitationService.findById(id),
+                productService.findById(productId)
+        );
+        solicitationItemService.delete(solicitationItemId);
         return ResponseEntity.noContent().build();
     }
 }
