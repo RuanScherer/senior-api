@@ -23,6 +23,11 @@ public class SolicitationItemPK implements Serializable {
 
     public SolicitationItemPK() {}
 
+    public SolicitationItemPK(final Solicitation solicitation, final Product product) {
+        this.solicitation = solicitation;
+        this.product = product;
+    }
+
     public Solicitation getSolicitation() {
         return solicitation;
     }
@@ -50,5 +55,11 @@ public class SolicitationItemPK implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(solicitation, product);
+    }
+
+    @Override
+    public String toString() {
+        return "Solicitation ID = " + solicitation +
+                ", Product ID = " + product;
     }
 }

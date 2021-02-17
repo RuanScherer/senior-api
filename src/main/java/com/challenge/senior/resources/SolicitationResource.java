@@ -3,6 +3,8 @@ package com.challenge.senior.resources;
 import com.challenge.senior.entities.Solicitation;
 import com.challenge.senior.entities.SolicitationItem;
 import com.challenge.senior.entities.dtos.SolicitationDTO;
+import com.challenge.senior.entities.pk.SolicitationItemPK;
+import com.challenge.senior.services.ProductService;
 import com.challenge.senior.services.SolicitationItemService;
 import com.challenge.senior.services.SolicitationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class SolicitationResource {
 
     @Autowired
     private SolicitationService solicitationService;
+
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private SolicitationItemService solicitationItemService;
@@ -60,5 +65,14 @@ public class SolicitationResource {
     @GetMapping(value = "/{id}/items")
     public ResponseEntity<List<SolicitationItem>> findAllItems(@PathVariable final UUID id) {
         return ResponseEntity.ok().body(solicitationItemService.findBySolicitationId(id));
+    }
+
+    @GetMapping(value = "/{id}/items/{productId}")
+    public ResponseEntity<SolicitationItem> findItemById(@PathVariable final UUID id, @PathVariable final UUID productId) {
+        SolicitationItemPK solicitationItemId = new SolicitationItemPK(
+                solicitationService.findById(id),
+                productService.findById(productId)
+        );
+        return ResponseEntity.ok().body(solicitationItemService.findById(solicitationItemId));
     }
 }
