@@ -11,17 +11,45 @@ import java.time.Instant;
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
+    private final static int BAD_REQUEST = HttpStatus.BAD_REQUEST.value();
+    private final static int NOT_FOUND = HttpStatus.NOT_FOUND.value();
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> resourceNotFound(final ResourceNotFoundException exception,
                                                           final HttpServletRequest request) {
-        final HttpStatus status = HttpStatus.NOT_FOUND;
         final StandardError error = new StandardError(
                 Instant.now(),
-                status.value(),
+                NOT_FOUND,
                 "Resource not found",
                 exception.getMessage(),
                 request.getRequestURI()
         );
-        return ResponseEntity.status(status).body(error);
+        return ResponseEntity.status(NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<StandardError> illegalArgumentException(final DatabaseException exception,
+                                                                  final HttpServletRequest request) {
+        final StandardError error = new StandardError(
+                Instant.now(),
+                BAD_REQUEST,
+                "Database error",
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StandardError> illegalArgumentException(final IllegalArgumentException exception,
+                                                                  final HttpServletRequest request) {
+        final StandardError error = new StandardError(
+                Instant.now(),
+                BAD_REQUEST,
+                "Illegal argument",
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(BAD_REQUEST).body(error);
     }
 }
