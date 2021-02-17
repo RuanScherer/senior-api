@@ -2,6 +2,7 @@ package com.challenge.senior.entities.pk;
 
 import com.challenge.senior.entities.Product;
 import com.challenge.senior.entities.Solicitation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;

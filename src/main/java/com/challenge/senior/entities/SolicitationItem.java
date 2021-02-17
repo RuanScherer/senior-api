@@ -1,6 +1,7 @@
 package com.challenge.senior.entities;
 
 import com.challenge.senior.entities.pk.SolicitationItemPK;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -32,6 +33,7 @@ public class SolicitationItem implements Serializable {
         this.price = price;
     }
 
+    @JsonIgnore
     public Solicitation getSolicitation() {
         return this.id.getSolicitation();
     }

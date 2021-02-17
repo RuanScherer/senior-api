@@ -1,32 +1,35 @@
 package com.challenge.senior.entities.dtos;
 
-import com.challenge.senior.entities.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
+import java.util.UUID;
 
 public class SolicitationItemDTO implements Serializable {
 
-    private Product product;
+    private UUID productID;
 
     private Integer quantity;
 
+    @JsonIgnore
     private Double price;
 
     public SolicitationItemDTO() {}
 
-    public SolicitationItemDTO(final Product product,
+    public SolicitationItemDTO(final UUID productID,
                                final Integer quantity,
                                final Double price) {
-        this.product = product;
+        this.productID = productID;
         this.quantity = quantity;
         this.price = price;
     }
 
-    public Product getProduct() {
-        return this.product;
+    public UUID getProductID() {
+        return this.productID;
     }
 
-    public void setProduct(final Product product) {
-        this.product = product;
+    public void setProductID(final UUID productID) {
+        this.productID = productID;
     }
 
     public Integer getQuantity() {
