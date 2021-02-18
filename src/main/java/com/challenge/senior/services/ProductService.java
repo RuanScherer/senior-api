@@ -1,9 +1,11 @@
 package com.challenge.senior.services;
 
 import com.challenge.senior.entities.Product;
+import com.challenge.senior.exceptions.DatabaseException;
 import com.challenge.senior.exceptions.ResourceNotFoundException;
 import com.challenge.senior.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +30,12 @@ public class ProductService {
     }
 
     public Product save(final Product product) {
+        verifyData(product);
         return productRepository.save(product);
     }
 
     public Product update(final UUID id, final Product product) {
+        verifyData(product);
         try {
             Product entity = productRepository.getOne(id);
             updateData(entity, product);
@@ -53,6 +57,13 @@ public class ProductService {
             productRepository.deleteById(id);
         } catch (final EmptyResultDataAccessException exception) { // for invalid record ID
             throw new ResourceNotFoundException(id);
+        } catch (DataIntegrityViolationException exception) {
+            throw new DatabaseException("It's not possible to delete a product or service that is linked to an solicitation.");
         }
+    }
+
+    public void verifyData(final Product product) {
+        if (product.getName().trim().equals("")) throw new IllegalArgumentException("Name is required");
+        if (product.getPrice() <= 0) throw new IllegalArgumentException("Price must be greater than 0");
     }
 }

@@ -3,10 +3,7 @@ package com.challenge.senior.entities;
 import com.challenge.senior.entities.enums.ProductType;
 import com.challenge.senior.entities.enums.SolicitationStatus;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
@@ -29,7 +26,7 @@ public class Solicitation implements Serializable {
     @Column(nullable = false)
     private Instant solicitationTime;
 
-    @OneToMany(mappedBy = "id.solicitation")
+    @OneToMany(mappedBy = "id.solicitation", cascade = CascadeType.REMOVE)
     private Set<SolicitationItem> items = new HashSet<>();
 
     private Double discount;

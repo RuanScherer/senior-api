@@ -30,6 +30,8 @@ public class SolicitationItemService {
     private ProductService productService;
 
     public SolicitationItem save(final SolicitationItem solicitationItem) {
+        if (solicitationItem.getQuantity() <= 0) throw new IllegalArgumentException("The discount must be greater than 0");
+
         final Double productPrice = solicitationItem.getProduct().getPrice();
         final Integer itemQuantity = solicitationItem.getQuantity();
         solicitationItem.setPrice(productPrice * itemQuantity);
@@ -49,6 +51,8 @@ public class SolicitationItemService {
 
     public SolicitationItem update(final SolicitationItemPK solicitationItemId,
                                    final SolicitationItemUpdateDTO solicitationItemUpdateDTO) {
+        if (solicitationItemUpdateDTO.getQuantity() <= 0) throw new IllegalArgumentException("The discount must be greater than 0");
+
         try {
             SolicitationItem entity = solicitationItemRepository.getOne(solicitationItemId);
             updateData(entity, solicitationItemUpdateDTO);
